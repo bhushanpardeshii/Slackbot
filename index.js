@@ -16,12 +16,9 @@ const PORT = process.env.PORT || 3000;
 
 // approve-test command
 app.post('/slack/commands', async (req, res) => {
-    console.log('Received slash command request:', req.body);
+
     try {
         const { trigger_id, command } = req.body;
-
-        console.log('Command:', command);
-        console.log('Trigger ID:', trigger_id);
 
         if (command !== '/approve-test') {
             return res.status(400).send('Invalid command');
@@ -89,7 +86,7 @@ app.post('/slack/interactions', async (req, res) => {
         const request_text = payload.view.state.values.approval_text.request_text.value;
         const requester = payload.user.id;
 
-        // send message to approver with approve/reject buttons
+        // send message to approver with approve andreject buttons
         await axios.post('https://slack.com/api/chat.postMessage', {
             channel: approver,
             text: `<@${requester}> has requested an approval:\n\n"${request_text}"`,
@@ -185,5 +182,9 @@ app.post('/slack/interactions', async (req, res) => {
         res.status(200).send();
     }
 });
+//to avoid running the server when the file is imported (testing purposes)
+if (require.main === module) {
+    app.listen(PORT, () => console.log(`bot running on port ${PORT}`));
+}
 
-app.listen(PORT, () => console.log(`bot running on port ${PORT}`));
+module.exports = app;
