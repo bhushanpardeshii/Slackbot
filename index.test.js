@@ -17,7 +17,7 @@ describe('slack bot tests', () => {
         jest.clearAllMocks();
     });
 
-    // test 1-check if slash command works
+    // test 1-check if approval-test command works
     test('slash command opens modal', async () => {
         // mocking slack api response
         axios.post.mockResolvedValue({ data: { ok: true } });

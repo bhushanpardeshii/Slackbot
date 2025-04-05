@@ -4,17 +4,12 @@ const bodyParser = require('body-parser');
 const axios = require('axios');
 
 const app = express();
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json({
-    verify: (req, res, buf) => {
-        req.rawBody = buf;
-    }
-}));
+app.use(bodyParser.json());
 
 const SLACK_BOT_TOKEN = process.env.SLACK_BOT_TOKEN;
 const PORT = process.env.PORT || 3000;
 
-// approve-test command
+// approval-test command
 app.post('/slack/commands', async (req, res) => {
 
     try {
@@ -136,12 +131,12 @@ app.post('/slack/interactions', async (req, res) => {
         const originalMessageTs = payload.message.ts;
         const originalChannel = payload.channel.id;
 
-        // notify requester of approval/rejection
+        // message to requester of approval/rejection
         const message = action_type === "approve" ?
             "Your request was approved" :
             "Your request was rejected";
 
-        // send message to requester
+        // sending message to requester
         await axios.post('https://slack.com/api/chat.postMessage', {
             channel: requester,
             text: `<@${approver}> ${message}`
